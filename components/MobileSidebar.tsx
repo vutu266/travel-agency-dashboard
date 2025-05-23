@@ -8,7 +8,7 @@ const MobileSidebar = () => {
   let sidebar : SidebarComponent
 
   const toggleSidebar = () => {
-    sidebar.toggle() //now the typescript sidebar become the syncfusion Sidebar.
+    if(sidebar) sidebar.toggle() //now the typescript sidebar becomes the syncfusion Sidebar.
   }
   
   return (
@@ -31,9 +31,9 @@ const MobileSidebar = () => {
       <SidebarComponent 
         width={270}
         ref={(Sidebar) => sidebar = Sidebar} // make the variable sidebar equal to syncfusion Sidebar
-        created={() => sidebar.hide} // create the sidebar 
-        closeOnDocumentClick={true} // close on click
-        showBackdrop={true} // show the grey-ish background color when toggle
+        created={() => sidebar.hide()} // create the sidebar 
+        closeOnDocumentClick={true} //  Sidebar closes when clicking outside
+        showBackdrop={true} //  Adds a background overlay when sidebar is open
         type="over"
       >
         <NavItems handleClick={toggleSidebar}/>

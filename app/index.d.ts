@@ -82,7 +82,6 @@ declare interface TripCardProps {
   tags: string[];
   price: string;
 }
-
 declare interface StatsCard {
   headerTitle: string;
   total: number;
@@ -94,6 +93,7 @@ declare interface TrendResult {
   trend: "increment" | "decrement" | "no change";
   percentage: number;
 }
+
 
 declare interface DashboardStats {
   totalUsers: number;
