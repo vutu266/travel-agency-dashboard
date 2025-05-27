@@ -1,4 +1,5 @@
-import { calculateTrendPercentage } from "~/lib/utils"
+import { calculateTrendPercentage, cn } from "~/lib/utils"
+
 
 
 const StatsCard = ({total, headerTitle, currentMonthCount, lastMonthCount}: StatsCard) => {
@@ -21,9 +22,16 @@ const StatsCard = ({total, headerTitle, currentMonthCount, lastMonthCount}: Stat
                     <figure className="flex items-center gap-1">
                         <img src={`/assets/icons/${isDecrement ? 'arrow-down-red.svg' : 'arrow-up-green.svg'}`}
                         className="size-5" alt='arror'/>
+                        <figcaption className={cn('text-sm font-medium', 
+                        isDecrement ? 'text-red-500' : 'text-success-700')}>
+                            {Math.round(percentage)}%
+                        </figcaption>
                     </figure>
+                    <p className='text-sm font-medium text-gray-100 truncate'>vs last month</p>
                 </div>
             </div>
+            <img src={`/assets/icons/${isDecrement ? 'decrement.svg' : 'increment.svg'}`}
+                className="xl:w-32 w-full h-full md:h-32 xl:h-full" alt="trend"/>
         </div>
     </article>
   )
