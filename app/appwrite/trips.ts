@@ -33,3 +33,4 @@ export const getTripById = async (tripId: string) => {
 
     return trip;
 }
+
