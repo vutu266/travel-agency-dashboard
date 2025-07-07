@@ -1,23 +1,31 @@
 import type { LoaderFunctionArgs } from "react-router"
-import { getTripById } from "~/appwrite/trips";
+import { getAllTrips, getTripById } from "~/appwrite/trips";
 import type { Route } from "./+types/trip-detail";
 import { parseTripData, cn, getFirstWord } from "~/lib/utils";
 import { Header, InfoPill } from "components";
 import { ChipsDirective, ChipDirective, ChipListComponent } from "@syncfusion/ej2-react-buttons";
 
-
 export const loader = async ({params}: LoaderFunctionArgs) => {
     const {tripId} = params
 
     if(!tripId) throw new Error('Trip ID is required');
-
-    return await getTripById(tripId)
+    const trip = await getTripById(tripId);
+    const trips = await getAllTrips(4, 0);
+    
+    return {
+        trip,
+        allTrips: trips.allTrips.map(({$id, tripDetails, imageUrls}) => ({
+            id: $id,
+            ...parseTripData(tripDetails),
+            imageUrls: imageUrls ?? [],
+        }))
+    }
 }
 
 const TripDetail = ({loaderData}: Route.ComponentProps) => {
 
-    const imageUrls = loaderData?.imageUrls || []
-    const tripData = parseTripData(loaderData?.tripDetail)
+    const imageUrls = loaderData?.trip?.imageUrls || []
+    const tripData = parseTripData(loaderData?.trip?.tripDetail)
 
 
     const { 
@@ -25,12 +33,19 @@ const TripDetail = ({loaderData}: Route.ComponentProps) => {
         groupType, budget, interests, estimatedPrice,
         description, bestTimeToVisit, weatherInfo, country } = tripData || {};
 
-        const pillItems = [
+    const allTrips = loaderData?.allTrips as Trip[] | [];
+
+    const pillItems = [
             {text: travelStyle, bg: '!bg-pink-50 !text-pink-500'},
             {text: groupType, bg: '!bg-primary-50 !text-primary-500'},
             {text: budget, bg: '!bg-success-50 !text-success-700'},
             {text: interests, bg: '!bg-navy-50 !text-navy-500'},
-        ]
+    ]
+
+    const visitTimeAndWeatherInfo = [
+            {title: 'Best Time to Visit', items: bestTimeToVisit},
+            {title: 'Weather', items: weatherInfo}
+    ]
   return (
     <main className="travel-detail wrapper">
         <Header
@@ -117,11 +132,10 @@ const TripDetail = ({loaderData}: Route.ComponentProps) => {
                         <h3>
                             Day {dayPlan.day}: {dayPlan.location}
                         </h3>
-
                         <ul>
                             {dayPlan.activities.map((activity, index: number) => (
                                 <li key={index}>
-                                    <span className="flex-shrink-0">{activity.time}</span>
+                                    <span className="flex-shrink-0 p-18-semibold">{activity.time}</span>
                                     <p className="flex-grow">{activity.description}</p>
                                 </li>
                             ))}
@@ -129,6 +143,25 @@ const TripDetail = ({loaderData}: Route.ComponentProps) => {
                     </li>
                 ))}
             </ul>
+
+            {visitTimeAndWeatherInfo.map(section => (
+                <section key={section.title} className="visit">
+                    <div>
+                        <h3>{section.title}</h3>
+                        <ul>
+                            {section.items?.map(item => (
+                                <li key={item}>
+                                    <p className="flex-row">{item}</p>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </section>
+            ))}
+            
+            <section className="flex flex-col gap-6">
+                <h2 className="p-24-semibold text-dark-100">Popular Trips</h2>
+            </section>
         </section>
     </main>
   )

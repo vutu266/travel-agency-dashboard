@@ -1,11 +1,11 @@
 import { Query } from "appwrite"
 import { appwriteConfig, database } from "./client"
-import { data } from "react-router";
+
 
 export const getAllTrips = async (limit: number, offset: number) => {
     const allTrips = await database.listDocuments(
-        appwriteConfig.tripCollectionId,
         appwriteConfig.databaseId,
+        appwriteConfig.tripCollectionId,
         [Query.limit(limit), Query.offset(offset), Query.orderDesc('createdAt')]
     )
 
